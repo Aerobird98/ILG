@@ -17,7 +17,7 @@ class Main {
         return file.type == "text/csv";
     }
 
-	static function sortFilesByName(fileList:FileList):Array<File> {
+	static function sortFilesByType(fileList:FileList):Array<File> {
         var files:Array<File> = [];
         for (i in 0...fileList.length) {
             files.push(fileList[i]);
@@ -42,7 +42,8 @@ class Main {
 		input.addEventListener("change", function() {
 			Browser.document.body.removeChild(input);
 
-			final files = sortFilesByName(input.files);
+			final files = sortFilesByType(input.files);
+			trace(files);
 			final file:File = input.files[0];
 			final reader:FileReader = new FileReader();
 			reader.readAsText(file);
@@ -67,13 +68,18 @@ class Main {
 					final div:DivElement = Browser.document.createDivElement();
 					Browser.document.body.appendChild(div);
 					final p:ParagraphElement = Browser.document.createParagraphElement();
-					p.innerHTML = '<b>${row[0]} ${row[1] ${row[7]}}</b>';
+					p.innerHTML = '<b>${row[0]} ${row[1]}</b>';
 					div.appendChild(p);
 					for (entry in 0...entryLength) {
-						if ((entry != 0) && (entry != 1)) {
+						if (entry != 0 && entry != 1) {
 							final p:ParagraphElement = Browser.document.createParagraphElement();
-							if (entry < row.length) {
-								p.innerText = row[entry].toString();
+
+							if (entry < row.length && entry != 6) {
+								if (entry == 2) {
+									p.innerText = '${row[entry]} ${row[7]}';
+								} else {
+									p.innerText = row[entry].toString();
+								}
 							} else {
 								p.innerHTML = '<br>';
 							}
