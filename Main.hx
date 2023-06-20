@@ -74,7 +74,7 @@ class Main {
 						if (entry != 0 && entry != 1 && entry != 7) {
 							final p:ParagraphElement = Browser.document.createParagraphElement();
 
-							if (entry < row.length || row[entry].toString() != "") {
+							if (entry < row.length && row[entry].toString() != "") {
 								if (entry == 2) {
 									p.innerText = '${row[entry]} ${row[7]}';
 								} else {
