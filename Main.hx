@@ -71,10 +71,10 @@ class Main {
 					p.innerHTML = '<b>${row[0]} ${row[1]}</b>';
 					div.appendChild(p);
 					for (entry in 0...entryLength) {
-						if (entry != 0 && entry != 1) {
+						if (entry != 0 && entry != 1 && entry != 7) {
 							final p:ParagraphElement = Browser.document.createParagraphElement();
 
-							if (entry < row.length && entry != 6) {
+							if (entry < row.length || row[entry].toString() != "") {
 								if (entry == 2) {
 									p.innerText = '${row[entry]} ${row[7]}';
 								} else {
