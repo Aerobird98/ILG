@@ -24,13 +24,36 @@ HxOverrides.now = function() {
 	return Date.now();
 };
 var Main = function() { };
+Main.isCSVFile = function(file) {
+	return file.type == "text/csv";
+};
+Main.sortFilesByType = function(fileList) {
+	var files = [];
+	var _g = 0;
+	var _g1 = fileList.length;
+	while(_g < _g1) files.push(fileList[_g++]);
+	files.sort(function(a,b) {
+		if(Main.isCSVFile(a) && Main.isCSVFile(b)) {
+			return 0;
+		}
+		if(Main.isCSVFile(a)) {
+			return 1;
+		} else {
+			return -1;
+		}
+	});
+	return files;
+};
 Main.main = function() {
 	var input = window.document.createElement("input");
 	input.type = "file";
-	input.multiple = false;
+	input.multiple = true;
+	input.accept = "text/csv,image/*";
 	window.document.body.appendChild(input);
 	input.addEventListener("change",function() {
 		window.document.body.removeChild(input);
+		var files = Main.sortFilesByType(input.files);
+		console.log("Main.hx:46:",files);
 		var file = input.files[0];
 		var reader = new FileReader();
 		reader.readAsText(file);
@@ -41,6 +64,7 @@ Main.main = function() {
 				rows.pop();
 			}
 			var entries = [];
+			var entryLength = rows[0].split(";").length;
 			var _g = 0;
 			while(_g < rows.length) {
 				var row = rows[_g];
@@ -59,12 +83,19 @@ Main.main = function() {
 				p.innerHTML = "<b>" + row[0] + " " + row[1] + "</b>";
 				div.appendChild(p);
 				var _g1 = 0;
-				var _g2 = row.length;
-				while(_g1 < _g2) {
+				while(_g1 < entryLength) {
 					var entry = _g1++;
-					if(entry != 0 && entry != 1 && entry < 8) {
+					if(entry != 0 && entry != 1 && entry != 7) {
 						var p1 = window.document.createElement("p");
-						p1.innerText = row[entry].toString();
+						if(entry < row.length && row[entry].toString() != "") {
+							if(entry == 2) {
+								p1.innerText = "" + row[entry] + " " + row[7];
+							} else {
+								p1.innerText = row[entry].toString();
+							}
+						} else {
+							p1.innerHTML = "<br>";
+						}
 						div.appendChild(p1);
 					}
 				}
