@@ -144,7 +144,7 @@ class Main {
 							} else {
 								p.innerHTML = '<br>';
 							}
-							pDetail.innerText = details[entry];
+							pDetail.innerHTML = '<b>${details[entry]}</b>';
 
 							detailsSpan.appendChild(pDetail);
 							dataSpan.appendChild(p);
