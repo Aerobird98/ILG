@@ -1,7 +1,6 @@
 package;
 
 import js.html.ImageElement;
-import js.html.Image;
 import js.html.FileReader;
 import js.html.FileList;
 import js.html.File;
@@ -14,7 +13,6 @@ using StringTools;
 
 typedef Entry = Array<String>;
 typedef Entries = Array<Entry>;
-typedef ImageEntries = Array<String>;
 
 class Main {
 	static function isCSVFile(file:File):Bool {
@@ -38,14 +36,30 @@ class Main {
 		return files;
 	}
 
-	static function readImage(file:File, img:ImageElement) {
-        final fileReader:FileReader = new FileReader();
+	static function readImage(file:File, img:ImageElement):Void {
+		final fileReader:FileReader = new FileReader();
 
-        fileReader.onload = function(event) {
-            img.src = fileReader.result;
-        };
+		fileReader.addEventListener("load", function(event) {
+			img.src = fileReader.result;
+		});
 
-        fileReader.readAsDataURL(file);
+		fileReader.readAsDataURL(file);
+	}
+
+	static function extractNumber(str:String):Int {
+		var regex:EReg = ~/(\d+)$/;
+		var matched:Bool = regex.match(str);
+
+		if (matched) {
+			var startPos:Int = regex.matchedPos().pos;
+			var endPos:Int = startPos + regex.matchedPos().len;
+			var numberStr:String = str.substring(startPos, endPos);
+			return Std.parseInt(numberStr);
+		} else {
+			trace("Failed to extract the number from the string.");
+			return -1;
+		}
+		return -1;
 	}
 
 	static function main():Void {
@@ -53,7 +67,7 @@ class Main {
 		input.type = "file";
 		input.multiple = true;
 		input.accept = 'text/csv,image/*';
-		
+
 		Browser.document.body.appendChild(input);
 
 		input.addEventListener("change", function() {
@@ -69,11 +83,11 @@ class Main {
 				reader.addEventListener("load", function() {
 					final csv:String = reader.result;
 					final rows:Entry = csv.split("\n");
-	
+
 					if (StringTools.trim(rows[rows.length - 1]) == "") {
 						rows.pop();
 					}
-	
+
 					final entries:Entries = [];
 					final entryLength:Int = rows[0].split(";").length;
 					for (row in rows) {
@@ -87,28 +101,31 @@ class Main {
 						final div:DivElement = Browser.document.createDivElement();
 						final dataDiv:DivElement = Browser.document.createDivElement();
 						final imgDiv = Browser.document.createDivElement();
-	
+
 						final p:ParagraphElement = Browser.document.createParagraphElement();
 						p.innerHTML = '<b>${row[0]} ${row[1]}</b>';
-	
+
 						final img = Browser.document.createImageElement();
 						for (im in images) {
-							if (im.name.contains(row[0])) {
+							final dataName = row[0];
+							final imgName = im.name.split(".")[0];
+
+							if (extractNumber(dataName) == extractNumber(imgName)) {
 								readImage(im, img);
 								break;
 							}
 						}
-	
+
 						dataDiv.appendChild(p);
 						imgDiv.appendChild(img);
-	
+
 						div.appendChild(dataDiv);
 						div.appendChild(imgDiv);
-	
+
 						for (entry in 0...entryLength) {
 							if (entry != 0 && entry != 1 && entry != 7) {
 								final p:ParagraphElement = Browser.document.createParagraphElement();
-	
+
 								if (entry < row.length && row[entry].toString() != "") {
 									if (entry == 2) {
 										p.innerText = '${row[entry]} ${row[7]}';
@@ -121,7 +138,7 @@ class Main {
 								dataDiv.appendChild(p);
 							}
 						}
-	
+
 						Browser.document.body.appendChild(div);
 					}
 				});
@@ -129,11 +146,11 @@ class Main {
 				reader.addEventListener("load", function() {
 					final csv:String = reader.result;
 					final rows:Entry = csv.split("\n");
-	
+
 					if (StringTools.trim(rows[rows.length - 1]) == "") {
 						rows.pop();
 					}
-	
+
 					final entries:Entries = [];
 					final entryLength:Int = rows[0].split(";").length;
 					for (row in rows) {
@@ -142,7 +159,7 @@ class Main {
 							entries.push(entry);
 						}
 					}
-	
+
 					for (row in entries) {
 						final div:DivElement = Browser.document.createDivElement();
 						Browser.document.body.appendChild(div);
@@ -152,7 +169,7 @@ class Main {
 						for (entry in 0...entryLength) {
 							if (entry != 0 && entry != 1 && entry != 7) {
 								final p:ParagraphElement = Browser.document.createParagraphElement();
-	
+
 								if (entry < row.length && row[entry].toString() != "") {
 									if (entry == 2) {
 										p.innerText = '${row[entry]} ${row[7]}';
