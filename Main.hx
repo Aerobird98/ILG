@@ -1,5 +1,6 @@
 package;
 
+import js.html.SpanElement;
 import js.html.ImageElement;
 import js.html.FileReader;
 import js.html.FileList;
@@ -89,7 +90,8 @@ class Main {
 					}
 
 					final entries:Entries = [];
-					final entryLength:Int = rows[0].split(";").length;
+					final details:Array<String> = rows[0].split(";");
+					final entryLength:Int = details.length;
 					for (row in rows) {
 						if (row != rows[0]) {
 							final entry:Entry = row.split(";");
@@ -99,11 +101,13 @@ class Main {
 
 					for (row in entries) {
 						final div:DivElement = Browser.document.createDivElement();
-						final dataDiv:DivElement = Browser.document.createDivElement();
 						final imgDiv = Browser.document.createDivElement();
+						final displayDiv = Browser.document.createDivElement();
+
+						final dataSpan:SpanElement = Browser.document.createSpanElement();
+						final detailsSpan:SpanElement = Browser.document.createSpanElement();
 
 						final p:ParagraphElement = Browser.document.createParagraphElement();
-						p.innerHTML = '<b>${row[0]} ${row[1]}</b>';
 
 						final img = Browser.document.createImageElement();
 						for (im in images) {
@@ -116,27 +120,34 @@ class Main {
 							}
 						}
 
-						dataDiv.appendChild(p);
+						dataSpan.style.right = "0px";
+
+						dataSpan.appendChild(p);
 						imgDiv.appendChild(img);
 
-						div.appendChild(dataDiv);
+						displayDiv.appendChild(detailsSpan);
+						displayDiv.appendChild(dataSpan);
+
+						div.appendChild(displayDiv);
 						div.appendChild(imgDiv);
 
 						for (entry in 0...entryLength) {
-							if (entry != 0 && entry != 1 && entry != 7) {
-								final p:ParagraphElement = Browser.document.createParagraphElement();
+							final p:ParagraphElement = Browser.document.createParagraphElement();
+							final pDetail:ParagraphElement = Browser.document.createParagraphElement();
 
-								if (entry < row.length && row[entry].toString() != "") {
-									if (entry == 2) {
-										p.innerText = '${row[entry]} ${row[7]}';
-									} else {
-										p.innerText = row[entry].toString();
-									}
+							if (entry < row.length && row[entry].toString() != "") {
+								if (entry == 2) {
+									p.innerText = '${row[entry]} ${row[7]}';
 								} else {
-									p.innerHTML = '<br>';
+									p.innerText = row[entry].toString();
 								}
-								dataDiv.appendChild(p);
+							} else {
+								p.innerHTML = '<br>';
 							}
+							pDetail.innerText = details[entry];
+
+							detailsSpan.appendChild(pDetail);
+							dataSpan.appendChild(p);
 						}
 
 						Browser.document.body.appendChild(div);
