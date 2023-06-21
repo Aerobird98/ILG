@@ -8,30 +8,32 @@ import js.html.ParagraphElement;
 import js.html.DivElement;
 import js.Browser;
 
+using StringTools;
+
 typedef Entry = Array<String>;
 typedef Entries = Array<Entry>;
 
 class Main {
-
 	static function isCSVFile(file:File):Bool {
-        return file.type == "text/csv";
-    }
+		return file.type == "text/csv";
+	}
 
 	static function sortFilesByType(fileList:FileList):Array<File> {
-        var files:Array<File> = [];
-        for (i in 0...fileList.length) {
-            files.push(fileList[i]);
-        }
-        files.sort(function(a:File, b:File) {
-			if (isCSVFile(a) && isCSVFile(b)) return 0;
+		var files:Array<File> = [];
+		for (i in 0...fileList.length) {
+			files.push(fileList[i]);
+		}
+		files.sort(function(a:File, b:File) {
+			if (isCSVFile(a) && isCSVFile(b))
+				return 0;
 			if (isCSVFile(a)) {
 				return 1;
 			} else {
 				return -1;
 			}
 		});
-        return files;
-    }
+		return files;
+	}
 
 	static function main() {
 		final input:InputElement = Browser.document.createInputElement();
