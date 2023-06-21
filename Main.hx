@@ -131,7 +131,7 @@ class Main {
 						div.appendChild(displayDiv);
 						div.appendChild(imgDiv);
 
-						for (entry in 0...entryLength) {
+						for (entry in 0...entryLength - 1) {
 							final p:ParagraphElement = Browser.document.createParagraphElement();
 							final pDetail:ParagraphElement = Browser.document.createParagraphElement();
 
